@@ -1,0 +1,25 @@
+{
+  "name" : "imgui-fs",
+  "version-string" : "1.0.0",
+  "builtin-baseline" : "3426a5e955f029ab0088ef6656fda06552bd2699",
+  "dependencies" : [ {
+    "name" : "imgui",
+    "version>=" : "1.91.0",
+    "features" : [ "docking-experimental", "sdl2-binding", "sdl2-renderer-binding" ]
+  }, {
+    "name" : "sdl2",
+    "version>=" : "2.32.4"
+  }, {
+    "name" : "sdl2-gfx",
+    "version>=" : "1.0.4#11"
+  }, {
+    "name" : "vcpkg-cmake",
+    "version>=" : "2024-04-23"
+  }, {
+    "name" : "vcpkg-cmake-config",
+    "version>=" : "2024-05-23"
+  }, {
+    "name" : "benchmark",
+    "version>=" : "1.9.2"
+  } ]
+}
