@@ -1,0 +1,3 @@
+#define MAJOR "@Sudoku_VERSION_MAJOR@"
+#define MINOR "@Sudoku_VERSION_MINOR@"
+#define PATCH "@Sudoku_VERSION_PATCH@"

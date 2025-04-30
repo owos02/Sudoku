@@ -36,14 +36,13 @@ public:
     }
 
     void update() {
-
     }
 
     void gameWindow() {
         auto old_color = ImGui::GetStyle().Colors[ImGuiCol_FrameBg];
 
         ImGui::Begin("Sudoku##Sudoku", nullptr, 0);
-        ImGui::BeginTable("SudokuArea", 9, ImGuiTableFlags_Borders , {70 * 9, (70) * 9});
+        ImGui::BeginTable("SudokuArea", 9, ImGuiTableFlags_Borders, {70 * 9, (70) * 9});
         ImGui::GetStyle().CellPadding = {(70.0f - ImGui::GetFontSize()) / 2, (70.0f - ImGui::GetFontSize()) / 2 - 1};
         bool flip = true;
         for (int row_index = 0; auto &row: field) {
@@ -56,7 +55,7 @@ public:
                 if (!flip) {
                     ImGui::GetStyle().Colors[ImGuiCol_FrameBg] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
                     ImGui::GetStyle().Colors[ImGuiCol_Text] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
-                }else {
+                } else {
                     ImGui::GetStyle().Colors[ImGuiCol_FrameBg] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
                     ImGui::GetStyle().Colors[ImGuiCol_Text] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
                 }
@@ -84,7 +83,28 @@ public:
         ImGui::GetStyle().Colors[ImGuiCol_FrameBg] = old_color;
     }
 
+    const char *solvingAlgorithms[2] = {"Backtrace", "Placeholder"};
+    int item_selected_idx = 0;
+
     void settingsWindow() {
+        ImGui::Begin("Solving##Solving");
+        const char *combo_preview_value = solvingAlgorithms[item_selected_idx];
+        if (ImGui::BeginCombo("Solving Algorithm", combo_preview_value, ImGuiComboFlags_WidthFitPreview)) {
+            for (int n = 0; n < IM_ARRAYSIZE(solvingAlgorithms); n++) {
+                const bool is_selected = (item_selected_idx == n);
+                if (ImGui::Selectable(solvingAlgorithms[n], is_selected))
+                    item_selected_idx = n;
+
+                // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                if (is_selected)
+                    ImGui::SetItemDefaultFocus();
+            }
+            ImGui::EndCombo();
+        }
+        if (ImGui::Button(" Solve ")) {
+
+        }
+        ImGui::End();
         ImGui::Begin("Settings##Settings");
         ImGui::End();
     };
@@ -95,7 +115,6 @@ public:
     };
 
     void setStyling() {
-
     }
 };
 #endif //APPLICATON_H

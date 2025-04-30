@@ -16,6 +16,9 @@
 #include <stdio.h>
 #include <SDL.h>
 #include <print>
+#include <benchmark/benchmark.h>
+#include <format>
+#include "Sudoku.h"
 #include "Application/Application.h"
 
 #if !SDL_VERSION_ATLEAST(2,0,17)
@@ -25,6 +28,7 @@
 // Main code
 
 int main2(int, char**) {
+
     std::print("Hello World!");
     return 0;
 }
@@ -46,7 +50,8 @@ int main(int, char**)
 
     // Create window with SDL_Renderer graphics context
     SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-    SDL_Window* window = SDL_CreateWindow("Sudoku", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
+    std::string windowTitle = std::format("Sudoku v{0}.{1}.{2}", MAJOR, MINOR, PATCH);
+    SDL_Window* window = SDL_CreateWindow(windowTitle.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
     if (window == nullptr)
     {
         printf("Error: SDL_CreateWindow(): %s\n", SDL_GetError());

@@ -3,14 +3,32 @@ project(Sudoku VERSION 0.1.0)
 
 set(CMAKE_CXX_STANDARD 23)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wall -Wextra -Wpedantic ")
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    # using Clang
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    # using GCC
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wall -Wextra -Wpedantic ")
 
-if (CMAKE_BUILD_TYPE MATCHES Release)
-    message( STATUS "[INFO]: Enable Maximum Optimization")
-    add_compile_options(-O3 )
-    add_compile_options(-D _RELEASE)
-elseif (CMAKE_BUILD_TYPE MATCHES Debug)
-    add_compile_options(-D _DEBUG)
+    if (CMAKE_BUILD_TYPE MATCHES Release)
+        message(STATUS "[INFO]: Enable Maximum Optimization")
+        add_compile_options(-O3)
+        add_compile_options(-D _RELEASE)
+    elseif (CMAKE_BUILD_TYPE MATCHES Debug)
+        add_compile_options(-D _DEBUG)
+    endif ()
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+    # using Intel C++
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    # using Visual Studio C++
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}") # Add error flags for MSVC
+
+    if (CMAKE_BUILD_TYPE MATCHES Release)
+        message(STATUS "[INFO]: Enable Maximum Optimization")
+        add_compile_options(/O2)
+        add_compile_options(-D _RELEASE)
+    elseif (CMAKE_BUILD_TYPE MATCHES Debug)
+        add_compile_options(-D _DEBUG)
+    endif ()
 endif ()
 
 configure_file(Sudoku.h.in Sudoku.h)
@@ -37,4 +55,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE SDL2::SDL2_gfx)
 find_package(benchmark CONFIG REQUIRED)
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE benchmark::benchmark benchmark::benchmark_main)
 
-target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${PROJECT_BINARY_DIR})
+target_include_directories(${CMAKE_PROJECT_NAME}
+        PRIVATE
+        ${PROJECT_BINARY_DIR}
+)
