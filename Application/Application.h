@@ -66,10 +66,10 @@ public:
                     ImGui::GetStyle().Colors[ImGuiCol_FrameBg] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
                     ImGui::GetStyle().Colors[ImGuiCol_Text] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
                 }
-                auto fmt = std::format("##{}", (row_index * _field.size() + cell_index));
+                auto cellNumber = std::format("##{}", (row_index * _field.size() + cell_index));
                 ImGui::TableSetColumnIndex(cell_index);
                 ImGui::SetNextItemWidth(70.0);
-                ImGui::InputInt(fmt.c_str(), &cell, 0, 0,
+                ImGui::InputInt(cellNumber.c_str(), &cell, 0, 0,
                                 ImGuiInputTextFlags_AlwaysOverwrite |
                                 ImGuiInputTextFlags_CharsDecimal);
                 cell = cell % 10; // Only allow decimals 0-9
