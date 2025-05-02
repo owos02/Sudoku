@@ -9,13 +9,14 @@
 
 |  Libraries | Status |
 |-----------:|:------:|
-|       json |   ❌    |
-| networking |   ❌    |
+|       json |   ️✅   |
+| networking |   ️✅   |
 
-|   Generation | Status |
-|-------------:|:------:|
-| Forward Fill |   ❌    |
-| WebAPI fetch |   ❌    |
+|      Generation | Status |
+|----------------:|:------:|
+|    Forward Fill |   ❌    |
+|    WebAPI fetch |   ✅    |
+|  Multiple API's |   ❌    |
 
 | Algorithms[¹](#-strategies-from-sudokuwikiorg) | Difficulty | Status |
 |-----------------------------------------------:|:----------:|:------:|

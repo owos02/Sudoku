@@ -11,7 +11,6 @@
 #include "Settings.h"
 
 namespace Sudoku {
-
     class Gui {
     public:
         static void show() {
@@ -71,8 +70,35 @@ namespace Sudoku {
         };
 
         static void showOptions() {
-            ImGui::Begin("Solving##Solving");
+            ImGui::Begin("General##Solving");
+            ImGui::SeparatorText("Generation");
+            if (const char *difficultyPreview = _difficulties[_difficultiesSelectedIndex];
+                ImGui::BeginCombo("Difficulty##Sudoku_Difficulty", difficultyPreview)) {
+                for (int n = 0; n < IM_ARRAYSIZE(_difficulties); n++) {
+                    const bool selected = (_difficultiesSelectedIndex == n);
+                    if (ImGui::Selectable(_difficulties[n], selected))
+                        _difficultiesSelectedIndex = n;
 
+                    // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    if (selected)
+                        ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+            }
+            if (true) {
+                const auto oldColor = ImGui::GetStyle().Colors[ImGuiCol_Text];
+                ImGui::GetStyle().Colors[ImGuiCol_Text] = Colors::warningRed;
+                ImGui::Text("[FIXME]: Dosuku ignores the difficulty parameter");
+                ImGui::GetStyle().Colors[ImGuiCol_Text] = oldColor;
+            }
+
+            ImGui::Text(std::format("Current Difficulty: {}", _sudokuDifficulty).c_str());
+            if (ImGui::Button(" Fetch ")) {
+                _generateSudoku = true;
+            }
+            ImGui::SeparatorText("Algorithms");
+            if (ImGui::Button(" Solve ")) {
+            }
             if (const char *algorithmPreview = _solvingAlgorithms[_algorithmSelectedIndex];
                 ImGui::BeginCombo("Solving Algorithm", algorithmPreview, ImGuiComboFlags_WidthFitPreview)) {
                 for (int n = 0; n < IM_ARRAYSIZE(_solvingAlgorithms); n++) {
@@ -86,15 +112,6 @@ namespace Sudoku {
                 }
                 ImGui::EndCombo();
             }
-            if (ImGui::Button(" Fetch ")) {
-                _generateSudoku = true;
-
-            }
-
-            if (ImGui::Button(" Solve ")) {
-            }
-            ImGui::End();
-            ImGui::Begin("Settings##Settings");
             ImGui::End();
         }
 

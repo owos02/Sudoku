@@ -43,16 +43,17 @@ endif ()
 
 # [SECTION] Find Packages
 find_package(SDL2 CONFIG REQUIRED)
-find_package(imgui CONFIG REQUIRED)
 find_package(sdl2-gfx CONFIG REQUIRED)
+find_package(imgui CONFIG REQUIRED)
 find_package(benchmark CONFIG REQUIRED)
+find_package(CURL REQUIRED)
 
 add_executable(${CMAKE_PROJECT_NAME}
         main.cpp
         Application/Application.cpp
         Application/Application.h
-        Application/GUI.cpp
-        Application/GUI.h
+        Application/Gui.cpp
+        Application/Gui.h
         Application/Algorithm.cpp
         Application/Algorithm.h
         Application/Settings.h
@@ -65,11 +66,11 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
 )
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE imgui::imgui)
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE SDL2::SDL2_gfx)
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE CURL::libcurl)
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
         benchmark::benchmark
         benchmark::benchmark_main
 )
-
 target_include_directories(${CMAKE_PROJECT_NAME}
         PRIVATE
         ${PROJECT_BINARY_DIR}

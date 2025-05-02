@@ -7,17 +7,33 @@
 
 #include <array>
 #include <print>
+#include <iostream>
+#include <algorithm>
+#include <string>
 #include <SDL.h>
-#include <SDL_net.h>
+#include <memory>
+#include <curl/curl.h>
+#include <nlohmann/json.hpp>
 #include "Gui.h"
 #include "Settings.h"
 
 namespace Sudoku {
     class Application {
+    private:
+        static size_t curlWriteCallback(char *ptr, const size_t size, const size_t nmemb, void *userdata) {
+            static_cast<std::string *>(userdata)->append((char *) ptr, size * nmemb);
+            return size * nmemb;
+        }
+
     public:
         Application() {
+            curl_global_init(CURL_GLOBAL_DEFAULT);
+            _curl = curl_easy_init();
             Gui::setStyling();
             for (auto &row: _field) {
+                row.fill(0);
+            }
+            for (auto &row: _solution) {
                 row.fill(0);
             }
         }
@@ -27,36 +43,51 @@ namespace Sudoku {
             update();
         }
 
-        void generateSudoku() {
-            IPaddress ip;
-            SDLNet_ResolveHost(&ip, "https://sudoku-api.vercel.app", 443);
-            TCPsocket socket = SDLNet_TCP_Open(&ip);
+        void generateSudoku() const {
+            //TODO: Add multiple generation api's
 
-            std::string request;
-            request.append("GET /api/dosuku HTTP1.1\r\n");
-            request.append("Host: sudoku-api.vercel.app\r\n");
-            int requestLength = static_cast<int>(request.length());
-            int sentLength = SDLNet_TCP_Send(
-                socket,
-                request.c_str(),
-                requestLength
-            );
-            if (sentLength != requestLength) {
-                std::println("[WARNING]: Network Error");
+            std::string gameData;
+            const auto difficulty = static_cast<Difficulty>(_difficultiesSelectedIndex);
+            std::string uri;
+            switch (difficulty) {
+                case Difficulty::EASY:
+                    uri = "https://sudoku-api.vercel.app/api/dosuku?where={difficulty=Easy}";
+                    break;
+                case Difficulty::MEDIUM:
+                    uri = "https://sudoku-api.vercel.app/api/dosuku?where={difficulty=Medium}";
+                    break;
+                case Difficulty::HARD:
+                    uri = "https://sudoku-api.vercel.app/api/dosuku?where={difficulty=Hard}";
+                    break;
+                default: uri = "https://sudoku-api.vercel.app/api/dosuku";
             }
 
-            constexpr int bufferSize = 4096;
-            std::string recievedData;
-            auto buffer = std::make_unique<std::array<char, bufferSize> >();
-            int length;
-            do {
-                length = SDLNet_TCP_Recv(socket, (void *) buffer.get(), bufferSize);
-                for (const auto data: buffer) {
-                    recievedData.push_back(data);
-                }
-            } while (length > 0);
+            curl_easy_setopt(_curl, CURLOPT_URL, uri.c_str());
+            curl_easy_setopt(_curl, CURLOPT_HTTPGET, true);
+            curl_easy_setopt(_curl, CURLOPT_WRITEFUNCTION, curlWriteCallback);
+            curl_easy_setopt(_curl, CURLOPT_WRITEDATA, &gameData);
 
-            std::print("{}", recievedData);
+            if (const CURLcode curlResult = curl_easy_perform(_curl); curlResult != CURLE_OK) {
+                std::println("[ERROR]: Connection Error\nWebsite Error Code: {}", curl_easy_strerror(curlResult));
+                return;
+            }
+            std::erase(gameData, '\n');
+            nlohmann::json fieldData = nlohmann::json::parse(gameData);
+
+            _sudokuDifficulty = fieldData["newboard"]["grids"][0]["difficulty"];
+
+            std::println("[INFO]: Fetching Puzzle & Solution");
+            for (int otherRow = 0; otherRow < 9; otherRow++) {
+                for (int other = 0; other < 9; other++) {
+                    _field[otherRow][other] = fieldData["newboard"]["grids"][0]["value"][otherRow][other];
+                    _solution[otherRow][other] = fieldData["newboard"]["grids"][0]["solution"][otherRow][other];
+                }
+            }
+        }
+
+        ~Application() {
+            curl_easy_cleanup(_curl);
+            curl_global_cleanup();
         }
 
         void update() {
