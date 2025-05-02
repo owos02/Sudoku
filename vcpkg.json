@@ -21,5 +21,11 @@
   }, {
     "name" : "benchmark",
     "version>=" : "1.9.2"
+  }, {
+    "name" : "nlohmann-json",
+    "version>=" : "3.12.0"
+  }, {
+    "name" : "sdl2-net",
+    "version>=" : "2.2.0#3"
   } ]
 }

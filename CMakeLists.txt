@@ -26,7 +26,7 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel") # using Intel C++
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC") # using Visual Studio C++
 
     message(STATUS "[INFO]: Enable Aggressive Warnings")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Wall /WX")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4 /WX")
 
     if (CMAKE_BUILD_TYPE MATCHES Release)
         message(STATUS "[INFO]: Set _RELEASE Flag")
@@ -51,6 +51,11 @@ add_executable(${CMAKE_PROJECT_NAME}
         main.cpp
         Application/Application.cpp
         Application/Application.h
+        Application/GUI.cpp
+        Application/GUI.h
+        Application/Algorithm.cpp
+        Application/Algorithm.h
+        Application/Settings.h
 )
 # [SECTION] Linking Libraries
 target_link_libraries(${CMAKE_PROJECT_NAME}
