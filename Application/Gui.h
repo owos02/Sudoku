@@ -71,7 +71,22 @@ namespace Sudoku {
 
         static void showOptions() {
             ImGui::Begin("General##Solving");
+            ImGui::SeparatorText("Status");
+            if (_isSolved)
+                ImGui::TextColored(Colors::green, "Solved");
+            else
+                ImGui::TextColored(Colors::red, "Not Solved");
+
+            ImGui::Text(std::format("Current Difficulty: {}", _sudokuDifficulty).c_str());
+
+
             ImGui::SeparatorText("Generation");
+            ImGui::Text("Fetch API: "); ImGui::SameLine();
+            ImGui::RadioButton("YDS", &_selectedAPI, static_cast<int>(APIs::YDS)); ImGui::SameLine();
+            ImGui::RadioButton("Dosuku", &_selectedAPI, static_cast<int>(APIs::DOSUKU));
+            if (static_cast<APIs>(_selectedAPI) == APIs::DOSUKU) {
+                ImGui::TextColored(Colors::warningRed, "[INFO]: Dosuku ignores the difficulty parameter");
+            }
             if (const char *difficultyPreview = _difficulties[_difficultiesSelectedIndex];
                 ImGui::BeginCombo("Difficulty##Sudoku_Difficulty", difficultyPreview)) {
                 for (int n = 0; n < IM_ARRAYSIZE(_difficulties); n++) {
@@ -85,20 +100,26 @@ namespace Sudoku {
                 }
                 ImGui::EndCombo();
             }
-            if (true) {
-                const auto oldColor = ImGui::GetStyle().Colors[ImGuiCol_Text];
-                ImGui::GetStyle().Colors[ImGuiCol_Text] = Colors::warningRed;
-                ImGui::Text("[FIXME]: Dosuku ignores the difficulty parameter");
-                ImGui::GetStyle().Colors[ImGuiCol_Text] = oldColor;
-            }
 
-            ImGui::Text(std::format("Current Difficulty: {}", _sudokuDifficulty).c_str());
             if (ImGui::Button(" Fetch ")) {
                 _generateSudoku = true;
             }
+            if (ImGui::Button(" Check ")) {
+                _checkSudoku = true;
+            }
+            if (ImGui::Button(" Reset ")) {
+                _field = _original;
+                _isSolved = false;
+            }
+            ImGui::SameLine();
+            if (ImGui::Button(" Show Solution ")) {
+                _field = _solution;
+            }
             ImGui::SeparatorText("Algorithms");
             if (ImGui::Button(" Solve ")) {
+                _solveSudoku = true;
             }
+
             if (const char *algorithmPreview = _solvingAlgorithms[_algorithmSelectedIndex];
                 ImGui::BeginCombo("Solving Algorithm", algorithmPreview, ImGuiComboFlags_WidthFitPreview)) {
                 for (int n = 0; n < IM_ARRAYSIZE(_solvingAlgorithms); n++) {

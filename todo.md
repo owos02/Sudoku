@@ -7,16 +7,16 @@
 |   Benchmark's |    ❌    |
 | Style Program |    ❌    |
 
-|  Libraries | Status |
-|-----------:|:------:|
-|       json |   ️✅   |
-| networking |   ️✅   |
+| Libraries | Status |
+|----------:|:------:|
+|      json |   ️✅   |
+|      curl |   ️✅   |
 
 |      Generation | Status |
 |----------------:|:------:|
 |    Forward Fill |   ❌    |
 |    WebAPI fetch |   ✅    |
-|  Multiple API's |   ❌    |
+|  Multiple API's |   ✅    |
 
 | Algorithms[¹](#-strategies-from-sudokuwikiorg) | Difficulty | Status |
 |-----------------------------------------------:|:----------:|:------:|

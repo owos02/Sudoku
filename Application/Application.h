@@ -10,21 +10,20 @@
 #include <iostream>
 #include <algorithm>
 #include <string>
-#include <SDL.h>
 #include <memory>
+#include <random>
+#include <SDL.h>
+#include <thread>
 #include <curl/curl.h>
 #include <nlohmann/json.hpp>
+
+#include "Algorithm.h"
 #include "Gui.h"
 #include "Settings.h"
+#include "ApiHandler.h"
 
 namespace Sudoku {
     class Application {
-    private:
-        static size_t curlWriteCallback(char *ptr, const size_t size, const size_t nmemb, void *userdata) {
-            static_cast<std::string *>(userdata)->append((char *) ptr, size * nmemb);
-            return size * nmemb;
-        }
-
     public:
         Application() {
             curl_global_init(CURL_GLOBAL_DEFAULT);
@@ -38,51 +37,15 @@ namespace Sudoku {
             }
         }
 
-        void run() {
+        static void run() {
             Gui::show();
             update();
         }
 
-        void generateSudoku() const {
-            //TODO: Add multiple generation api's
 
-            std::string gameData;
-            const auto difficulty = static_cast<Difficulty>(_difficultiesSelectedIndex);
-            std::string uri;
-            switch (difficulty) {
-                case Difficulty::EASY:
-                    uri = "https://sudoku-api.vercel.app/api/dosuku?where={difficulty=Easy}";
-                    break;
-                case Difficulty::MEDIUM:
-                    uri = "https://sudoku-api.vercel.app/api/dosuku?where={difficulty=Medium}";
-                    break;
-                case Difficulty::HARD:
-                    uri = "https://sudoku-api.vercel.app/api/dosuku?where={difficulty=Hard}";
-                    break;
-                default: uri = "https://sudoku-api.vercel.app/api/dosuku";
-            }
-
-            curl_easy_setopt(_curl, CURLOPT_URL, uri.c_str());
-            curl_easy_setopt(_curl, CURLOPT_HTTPGET, true);
-            curl_easy_setopt(_curl, CURLOPT_WRITEFUNCTION, curlWriteCallback);
-            curl_easy_setopt(_curl, CURLOPT_WRITEDATA, &gameData);
-
-            if (const CURLcode curlResult = curl_easy_perform(_curl); curlResult != CURLE_OK) {
-                std::println("[ERROR]: Connection Error\nWebsite Error Code: {}", curl_easy_strerror(curlResult));
-                return;
-            }
-            std::erase(gameData, '\n');
-            nlohmann::json fieldData = nlohmann::json::parse(gameData);
-
-            _sudokuDifficulty = fieldData["newboard"]["grids"][0]["difficulty"];
-
-            std::println("[INFO]: Fetching Puzzle & Solution");
-            for (int otherRow = 0; otherRow < 9; otherRow++) {
-                for (int other = 0; other < 9; other++) {
-                    _field[otherRow][other] = fieldData["newboard"]["grids"][0]["value"][otherRow][other];
-                    _solution[otherRow][other] = fieldData["newboard"]["grids"][0]["solution"][otherRow][other];
-                }
-            }
+        static void generateSudoku() {
+            ApiHandler::execute(static_cast<APIs>(_selectedAPI));
+            std::ranges::transform(_sudokuDifficulty, _sudokuDifficulty.begin(), ::toupper);
         }
 
         ~Application() {
@@ -90,11 +53,33 @@ namespace Sudoku {
             curl_global_cleanup();
         }
 
-        void update() {
+        static void update() {
             if (_generateSudoku) {
                 generateSudoku();
                 _generateSudoku = false;
             }
+            if (_checkSudoku) {
+                _isSolved = Algorithm::fieldConsistency(_field);
+                _checkSudoku = false;
+            }
+            if (_solveSudoku) {
+                switch (static_cast<Algorithms>(_algorithmSelectedIndex)) {
+                    case Algorithms::BACKTRACE:
+                        deploySolvingAlgorithm(_field, &Algorithm::backtrace);
+                        break;
+                    default: ;
+                }
+                _solveSudoku = false;
+            }
+        }
+
+        static void deploySolvingAlgorithm(
+            std::array<std::array<int, 9>, 9> &field,
+            const std::function<void(std::array<std::array<int, 9>, 9> &)> &solveAlgorithm
+        ) {
+            // std::thread solver(solveAlgorithm, field);
+            // solver.detach();
+            (solveAlgorithm)(field);
         }
     };
 }

@@ -1,5 +1,5 @@
 {
-  "name" : "imgui-fs",
+  "name" : "sudoku",
   "version-string" : "1.0.0",
   "builtin-baseline" : "3426a5e955f029ab0088ef6656fda06552bd2699",
   "dependencies" : [ {

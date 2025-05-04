@@ -57,6 +57,8 @@ add_executable(${CMAKE_PROJECT_NAME}
         Application/Algorithm.cpp
         Application/Algorithm.h
         Application/Settings.h
+        Application/ApiHandler.cpp
+        Application/ApiHandler.h
 )
 # [SECTION] Linking Libraries
 target_link_libraries(${CMAKE_PROJECT_NAME}
