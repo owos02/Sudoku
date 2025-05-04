@@ -5,6 +5,8 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 #include <array>
+#include <imgui.h>
+#include <string>
 #include <curl/curl.h>
 // "FIXME Rename File "
 

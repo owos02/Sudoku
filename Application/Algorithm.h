@@ -60,7 +60,6 @@ namespace Sudoku {
             //Check Every Block
             for (int blockVerticalIndex = 0; blockVerticalIndex < 3; blockVerticalIndex++) {
                 for (int blockHorizontalIndex = 0; blockHorizontalIndex < 3; blockHorizontalIndex++) {
-
                     auto blockCheck = generateEmptyMap();
                     for (int rowIndex = 3 * blockVerticalIndex; rowIndex < 3 * blockVerticalIndex + 3; rowIndex++) {
                         for (int cellIndex = 3 * blockHorizontalIndex; cellIndex < 3 * blockHorizontalIndex + 3;
@@ -75,14 +74,49 @@ namespace Sudoku {
             return true;
         }
 
-        static void backtrace(const field area) {
-            auto tmp = fieldConsistency(area);
-            std::println("{}", tmp);
-
-            if (tmp) {
-                tmp = false;
+        static bool softChecks(const field area) {
+            //Check Rows
+            for (const auto &row: area) {
+                auto rowsCheck = generateEmptyMap();
+                for (const auto &cell: row) {
+                    if (rowsCheck[cell] > 0 && cell != 0)
+                        return false;
+                    rowsCheck[cell] = 1;
+                }
             }
+
+            //Check Columns
+            for (int cellIndex = 0; cellIndex < 9; cellIndex++) {
+                auto columnsCheck = generateEmptyMap();
+                for (int rowIndex = 0; rowIndex < 9; rowIndex++) {
+                    if (columnsCheck.at(area[rowIndex][cellIndex]) > 0 && area[rowIndex][cellIndex] != 0)
+                        return false;
+                    columnsCheck[area[rowIndex][cellIndex]] = 1;
+                }
+            }
+
+            //Check Every Block
+            for (int blockVerticalIndex = 0; blockVerticalIndex < 3; blockVerticalIndex++) {
+                for (int blockHorizontalIndex = 0; blockHorizontalIndex < 3; blockHorizontalIndex++) {
+                    auto blockCheck = generateEmptyMap();
+                    for (int rowIndex = 3 * blockVerticalIndex; rowIndex < 3 * blockVerticalIndex + 3; rowIndex++) {
+                        for (int cellIndex = 3 * blockHorizontalIndex; cellIndex < 3 * blockHorizontalIndex + 3;
+                             cellIndex++) {
+                            if (blockCheck.at(area[rowIndex][cellIndex]) > 0 && area[rowIndex][cellIndex] != 0)
+                                return false;
+                            blockCheck[area[rowIndex][cellIndex]] = 1;
+                        }
+                    }
+                }
+            }
+            return true;
         }
+
+        static void backtrace(field area) {
+
+            // Do backtrace
+        }
+
     };
 }
 

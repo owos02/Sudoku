@@ -77,6 +77,7 @@ namespace Sudoku {
             std::array<std::array<int, 9>, 9> &field,
             const std::function<void(std::array<std::array<int, 9>, 9> &)> &solveAlgorithm
         ) {
+
             // std::thread solver(solveAlgorithm, field);
             // solver.detach();
             (solveAlgorithm)(field);
