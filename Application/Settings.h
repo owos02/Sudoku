@@ -15,6 +15,7 @@ namespace Sudoku {
         MEDIUM,
         HARD
     };
+
     enum class Algorithms:int {
         BACKTRACE,
         PLACEHOLDER
@@ -32,8 +33,10 @@ namespace Sudoku {
     inline bool _generateSudoku = false;
     inline bool _solveSudoku = false;
     inline bool _checkSudoku = false;
+    inline bool _enableShowWebSolution = true;
     inline bool _isSolved = false;
     inline int _selectedAPI = 0;
+
     enum class APIs:int {
         YDS,
         DOSUKU
@@ -41,11 +44,16 @@ namespace Sudoku {
 
     namespace Settings {
     }
-    namespace Colors {
-        inline constexpr auto warningRed = ImVec4(237.0f / 255,135.0f / 255, 150.0f / 255,1.0);
-        inline constexpr auto red = ImVec4(210.0f / 255,15.0f / 255, 57.0f / 255,1.0);
-        inline constexpr auto green = ImVec4(64.0f / 255,160.0f / 255, 43.0f / 255,1.0);
 
+    namespace Colors {
+        inline constexpr auto gameBoardWhite = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+        inline constexpr auto gameBoardGrey = ImVec4(0.85f, 0.85f, 0.85f, 1.0f);
+        inline constexpr auto gameBoardText = ImVec4(0, 0, 0, 1.0f);
+
+
+        inline constexpr auto warningRed = ImVec4(237.0f / 255, 135.0f / 255, 150.0f / 255, 1.0);
+        inline constexpr auto red = ImVec4(210.0f / 255, 15.0f / 255, 57.0f / 255, 1.0);
+        inline constexpr auto green = ImVec4(64.0f / 255, 160.0f / 255, 43.0f / 255, 1.0);
     }
 }
 

@@ -20,7 +20,8 @@ namespace Sudoku {
         };
 
         static void showField() {
-            const auto old_color = ImGui::GetStyle().Colors[ImGuiCol_FrameBg];
+            const auto oldFrameBgColor = ImGui::GetStyle().Colors[ImGuiCol_FrameBg];
+            const auto originalText = ImGui::GetStyle().Colors[ImGuiCol_Text];
 
             ImGui::GetStyle().CellPadding = {
                 (70.0f - ImGui::GetFontSize()) / 2, (70.0f - ImGui::GetFontSize()) / 2 - 1
@@ -39,25 +40,34 @@ namespace Sudoku {
                         flipColoring = !flipColoring;
                     }
                     if (!flipColoring) {
-                        ImGui::GetStyle().Colors[ImGuiCol_FrameBg] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
-                        ImGui::GetStyle().Colors[ImGuiCol_Text] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+                        ImGui::GetStyle().Colors[ImGuiCol_FrameBg] = Colors::gameBoardGrey;
+                        ImGui::GetStyle().Colors[ImGuiCol_Text] = Colors::gameBoardText;
                     } else {
-                        ImGui::GetStyle().Colors[ImGuiCol_FrameBg] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
-                        ImGui::GetStyle().Colors[ImGuiCol_Text] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
+                        ImGui::GetStyle().Colors[ImGuiCol_FrameBg] = Colors::gameBoardWhite;
+                        ImGui::GetStyle().Colors[ImGuiCol_Text] = Colors::gameBoardText;
                     }
                     auto cellNumber = std::format("##{}", (row_index * _field.size() + cell_index));
                     ImGui::TableSetColumnIndex(cell_index);
                     ImGui::SetNextItemWidth(70.0);
+                    auto oldTextColor = ImGui::GetStyle().Colors[ImGuiCol_Text];
+                    if (cell == 0) {
+                        auto tmp = Colors::warningRed;
+                        tmp.w = 0;
+                        ImGui::GetStyle().Colors[ImGuiCol_Text] = tmp;
+                    }
                     ImGui::InputInt(cellNumber.c_str(), &cell, 0, 0,
                                     ImGuiInputTextFlags_AlwaysOverwrite |
                                     ImGuiInputTextFlags_CharsDecimal);
                     cell = cell % 10; // Only allow decimals 0-9
 
+                    if (cell == 0) {
+                        ImGui::GetStyle().Colors[ImGuiCol_Text] = oldTextColor;
+                    }
                     if (flipColoring) {
-                        const ImU32 white = ImGui::GetColorU32(ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+                        const ImU32 white = ImGui::GetColorU32(Colors::gameBoardWhite);
                         ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, white);
                     } else {
-                        const ImU32 black = ImGui::GetColorU32(ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
+                        const ImU32 black = ImGui::GetColorU32(Colors::gameBoardGrey);
                         ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, black);
                     }
                     cell_index++;
@@ -66,7 +76,9 @@ namespace Sudoku {
             }
             ImGui::EndTable();
             ImGui::End();
-            ImGui::GetStyle().Colors[ImGuiCol_FrameBg] = old_color;
+            ImGui::GetStyle().Colors[ImGuiCol_FrameBg] = oldFrameBgColor;
+            ImGui::GetStyle().Colors[ImGuiCol_Text] = originalText;
+
         };
 
         static void showOptions() {
@@ -78,11 +90,30 @@ namespace Sudoku {
                 ImGui::TextColored(Colors::red, "Not Solved");
 
             ImGui::Text(std::format("Current Difficulty: {}", _sudokuDifficulty).c_str());
-
+            if (ImGui::Button(" Check ")) {
+                _checkSudoku = true;
+            }
+            ImGui::SameLine();
+            if (ImGui::Button(" Reset ")) {
+                _field = _original;
+                _isSolved = false;
+            }
+            ImGui::SameLine();
+            ImGui::BeginDisabled(_enableShowWebSolution);
+            if (ImGui::Button(" Show Solution ")) {
+                _field = _solution;
+            }
+            if (ImGui::BeginItemTooltip()) {
+                ImGui::Text("Only usable when fetched from an online API.");
+                ImGui::EndTooltip();
+            }
+            ImGui::EndDisabled();
 
             ImGui::SeparatorText("Generation");
-            ImGui::Text("Fetch API: "); ImGui::SameLine();
-            ImGui::RadioButton("YDS", &_selectedAPI, static_cast<int>(APIs::YDS)); ImGui::SameLine();
+            ImGui::Text("Fetch API: ");
+            ImGui::SameLine();
+            ImGui::RadioButton("YDS", &_selectedAPI, static_cast<int>(APIs::YDS));
+            ImGui::SameLine();
             ImGui::RadioButton("Dosuku", &_selectedAPI, static_cast<int>(APIs::DOSUKU));
             if (static_cast<APIs>(_selectedAPI) == APIs::DOSUKU) {
                 ImGui::TextColored(Colors::warningRed, "[INFO]: Dosuku ignores the difficulty parameter");
@@ -103,23 +134,10 @@ namespace Sudoku {
 
             if (ImGui::Button(" Fetch ")) {
                 _generateSudoku = true;
-            }
-            if (ImGui::Button(" Check ")) {
-                _checkSudoku = true;
-            }
-            if (ImGui::Button(" Reset ")) {
-                _field = _original;
-                _isSolved = false;
-            }
-            ImGui::SameLine();
-            if (ImGui::Button(" Show Solution ")) {
-                _field = _solution;
-            }
-            ImGui::SeparatorText("Algorithms");
-            if (ImGui::Button(" Solve ")) {
-                _solveSudoku = true;
+                _enableShowWebSolution = false;
             }
 
+            ImGui::SeparatorText("Algorithms");
             if (const char *algorithmPreview = _solvingAlgorithms[_algorithmSelectedIndex];
                 ImGui::BeginCombo("Solving Algorithm", algorithmPreview, ImGuiComboFlags_WidthFitPreview)) {
                 for (int n = 0; n < IM_ARRAYSIZE(_solvingAlgorithms); n++) {
@@ -132,6 +150,9 @@ namespace Sudoku {
                         ImGui::SetItemDefaultFocus();
                 }
                 ImGui::EndCombo();
+            }
+            if (ImGui::Button(" Solve ")) {
+                _solveSudoku = true;
             }
             ImGui::End();
         }
