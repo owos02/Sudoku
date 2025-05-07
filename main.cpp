@@ -40,7 +40,7 @@ int main(int, char **) {
 
     // Create window with SDL_Renderer graphics context
     constexpr auto window_flags = static_cast<SDL_WindowFlags>(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-    const std::string windowTitle = std::format("Sudoku v{0}.{1}.{2}#", MAJOR, MINOR, PATCH);
+    const std::string windowTitle = std::format("Sudoku v{0}.{1}.{2}", MAJOR, MINOR, PATCH);
     SDL_Window *window = SDL_CreateWindow(windowTitle.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280,
                                           720, window_flags);
     if (window == nullptr) {

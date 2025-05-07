@@ -115,8 +115,8 @@ namespace Sudoku {
         const std::string field = fieldData["puzzle"];
         const std::string solution = fieldData["solution"];
         for (size_t index = 0; index < field.size(); index++) {
-            _field[std::floor(index / 9)][index % 9] = field.at(index) - '0';
-            _solution[std::floor(index / 9)][index % 9] = solution.at(index) - '0';
+            _field[static_cast<int>(std::floor(index / 9))][static_cast<int>(index % 9)] = field.at(index) - '0';
+            _solution[static_cast<int>(std::floor(index / 9))][static_cast<int>(index % 9)] = solution.at(index) - '0';
         }
         _original = _field;
     }

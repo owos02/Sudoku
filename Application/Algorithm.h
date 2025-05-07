@@ -7,7 +7,8 @@
 #include <algorithm>
 #include <array>
 #include <map>
-#include <print>
+
+#include "Settings.h"
 
 namespace Sudoku {
     class Algorithm {
@@ -24,10 +25,10 @@ namespace Sudoku {
         static std::map<int, int> generateEmptyMap() {
             std::map<int, int> tmp;
             for (int i = 0; i <= 9; i++)
-                tmp.insert(std::pair<int, int>(i, 0));
+                tmp.insert(std::pair(i, 0));
+            tmp[0] = -99;
             return tmp;
         }
-
 
         static bool fieldConsistency(const field area) {
             //Check if all cells contain valid numbers
@@ -74,49 +75,67 @@ namespace Sudoku {
             return true;
         }
 
-        static bool softChecks(const field area) {
-            //Check Rows
-            for (const auto &row: area) {
-                auto rowsCheck = generateEmptyMap();
-                for (const auto &cell: row) {
-                    if (rowsCheck[cell] > 0 && cell != 0)
-                        return false;
-                    rowsCheck[cell] = 1;
+        static bool sanityCheck(const field area, const int row, const int column, const int value) {
+            // Check X axis
+
+            for (int i = 0; i < 9; i++) {
+                if (value == area[i][column]) {
+                    return false;
                 }
             }
-
-            //Check Columns
-            for (int cellIndex = 0; cellIndex < 9; cellIndex++) {
-                auto columnsCheck = generateEmptyMap();
-                for (int rowIndex = 0; rowIndex < 9; rowIndex++) {
-                    if (columnsCheck.at(area[rowIndex][cellIndex]) > 0 && area[rowIndex][cellIndex] != 0)
-                        return false;
-                    columnsCheck[area[rowIndex][cellIndex]] = 1;
+            // Check X axis
+            for (int i = 0; i < 9; i++) {
+                if (value == area[row][i]) {
+                    return false;
                 }
             }
-
-            //Check Every Block
-            for (int blockVerticalIndex = 0; blockVerticalIndex < 3; blockVerticalIndex++) {
-                for (int blockHorizontalIndex = 0; blockHorizontalIndex < 3; blockHorizontalIndex++) {
-                    auto blockCheck = generateEmptyMap();
-                    for (int rowIndex = 3 * blockVerticalIndex; rowIndex < 3 * blockVerticalIndex + 3; rowIndex++) {
-                        for (int cellIndex = 3 * blockHorizontalIndex; cellIndex < 3 * blockHorizontalIndex + 3;
-                             cellIndex++) {
-                            if (blockCheck.at(area[rowIndex][cellIndex]) > 0 && area[rowIndex][cellIndex] != 0)
-                                return false;
-                            blockCheck[area[rowIndex][cellIndex]] = 1;
-                        }
+            const int yLimit = ((row / 3) * 3), xLimit = ((column / 3) * 3);
+            for (int y = yLimit; y < yLimit + 3; y++) {
+                for (int x = xLimit ; x < xLimit + 3; x++) {
+                    if (value == area[y][x]) {
+                        return false;
                     }
                 }
             }
             return true;
         }
 
-        static void backtrace(field area) {
-
-            // Do backtrace
+        static void startAlgorithm([[maybe_unused]] const Algorithm selected) {
+            // switch (selected) {
+            //     default:
+            //         break;
+            // }
         }
 
+        static void backtrace([[maybe_unused]] field area, [[maybe_unused]] int row, [[maybe_unused]] int column) {
+            if (row == 8 && column == 8) { return; }
+
+            if (_original[row][column] != 0) {
+                backtrace(area, row + 1, column +1);
+            }
+
+
+            for (int nextNumber = 1; nextNumber <= 9; nextNumber++) {
+                // Check if next value is possible
+                if (!sanityCheck(area, row, column, nextNumber ))
+                    break;
+                area[row][column] = nextNumber;
+            }
+            /*
+             * Was es tun soll
+             * Skip Zahlen die schon fest gesetzt sind
+             *  Zahl einsezen, überprüfe ob die zahl möglich ist
+             *  wenn ja gehe zur nächsten zelle
+             *  wenn nein geh zur nächsten zahl.
+             *  Wenn keine zahl passt geh eine zelle zurück und erhöhe diese bis es weiter gehen kann.
+             *
+             * Was sind die recursion abbruch Bedingungen?
+             *  Letzte Zelle in letzter reihe (9x9 feld)
+             *  Keine Zahl passt in der jetztigen Zelle
+             *
+             */
+            // Do backtrace
+        }
     };
 }
 

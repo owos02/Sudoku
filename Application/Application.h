@@ -6,11 +6,8 @@
 #define APPLICATION_H
 
 #include <array>
-#include <print>
-#include <iostream>
 #include <algorithm>
 #include <string>
-#include <memory>
 #include <random>
 #include <SDL.h>
 #include <thread>
@@ -75,12 +72,13 @@ namespace Sudoku {
 
         static void deploySolvingAlgorithm(
             std::array<std::array<int, 9>, 9> &field,
-            const std::function<void(std::array<std::array<int, 9>, 9> &)> &solveAlgorithm
+            [[maybe_unused]]const std::function<void(std::array<std::array<int, 9>, 9> &, int row, int col)> &solveAlgorithm
         ) {
 
             // std::thread solver(solveAlgorithm, field);
             // solver.detach();
-            (solveAlgorithm)(field);
+            //(solveAlgorithm)(field);
+            Algorithm::backtrace(field, 0,0);
         }
     };
 }
