@@ -6,6 +6,7 @@
 #define ALGORITHM_H
 #include <algorithm>
 #include <array>
+#include <functional>
 #include <map>
 
 #include "Settings.h"
@@ -107,34 +108,34 @@ namespace Sudoku {
             // }
         }
 
-        static void backtrace([[maybe_unused]] field area, [[maybe_unused]] int row, [[maybe_unused]] int column) {
-            if (row == 8 && column == 8) { return; }
+        static bool backtrace(field& area, const int row, const int column) {
+            //Calculate next row
+            int nextRow = row, nextColumn = column + 1;
+            if (nextColumn % 9 == 0) {
+                nextColumn = 0;
+                nextRow++;
+            }
 
+            //Check if last row & cell is being used
+            if (row == 8 && column == 8) { return true; }
+
+            //Cell has number
             if (_original[row][column] != 0) {
-                backtrace(area, row + 1, column +1);
+                return backtrace(area, nextRow, nextColumn);
             }
 
-
+            //https://pencilprogrammer.com/algorithms/sudoku-using-backtracking/
             for (int nextNumber = 1; nextNumber <= 9; nextNumber++) {
-                // Check if next value is possible
-                if (!sanityCheck(area, row, column, nextNumber ))
-                    break;
                 area[row][column] = nextNumber;
+                if (isValid()) {
+                    //TODO
+                    if (backtrace(area, nextRow, nextColumn));
+                }
             }
-            /*
-             * Was es tun soll
-             * Skip Zahlen die schon fest gesetzt sind
-             *  Zahl einsezen, überprüfe ob die zahl möglich ist
-             *  wenn ja gehe zur nächsten zelle
-             *  wenn nein geh zur nächsten zahl.
-             *  Wenn keine zahl passt geh eine zelle zurück und erhöhe diese bis es weiter gehen kann.
-             *
-             * Was sind die recursion abbruch Bedingungen?
-             *  Letzte Zelle in letzter reihe (9x9 feld)
-             *  Keine Zahl passt in der jetztigen Zelle
-             *
-             */
-            // Do backtrace
+
+
+            return backtrace(area, nextRow, nextColumn );
+            
         }
     };
 }
