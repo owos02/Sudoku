@@ -11,9 +11,11 @@
 namespace Sudoku {
     class ApiHandler {
     public:
-        static void execute(APIs api);
+        static void execute( APIs api );
+
     private:
         static void ydsApiFetch();
+
         static void dosukuApiFetch();
     };
 } // Sudoku

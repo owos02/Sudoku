@@ -25,48 +25,49 @@ namespace Sudoku {
     public:
         static std::map<int, int> generateEmptyMap() {
             std::map<int, int> tmp;
-            for (int i = 0; i <= 9; i++)
-                tmp.insert(std::pair(i, 0));
+            for ( int i = 0; i <= 9; i++ )
+                tmp.insert( std::pair( i, 0 ) );
             tmp[0] = -99;
             return tmp;
         }
 
-        static bool fieldConsistency(const field area) {
+        static bool fieldConsistency( const field area ) {
             //Check if all cells contain valid numbers
-            for (auto row: area) {
-                for (const int cell: row) {
-                    if (cell == 0) return false;
+            for ( auto row: area ) {
+                for ( const int cell: row ) {
+                    if ( cell == 0 )
+                        return false;
                 }
             }
 
             //Check Rows
-            for (const auto &row: area) {
-                auto rowsCheck = generateEmptyMap();
-                for (const auto &cell: row) {
-                    if (rowsCheck[cell] > 0)
+            for ( const auto &row: area ) {
+                auto rowsCheck = generateEmptyMap( );
+                for ( const auto &cell: row ) {
+                    if ( rowsCheck[cell] > 0 )
                         return false;
                     rowsCheck[cell] = 1;
                 }
             }
 
             //Check Columns
-            for (int cellIndex = 0; cellIndex < 9; cellIndex++) {
-                auto columnsCheck = generateEmptyMap();
-                for (int rowIndex = 0; rowIndex < 9; rowIndex++) {
-                    if (columnsCheck.at(area[rowIndex][cellIndex]) > 0)
+            for ( int cellIndex = 0; cellIndex < 9; cellIndex++ ) {
+                auto columnsCheck = generateEmptyMap( );
+                for ( int rowIndex = 0; rowIndex < 9; rowIndex++ ) {
+                    if ( columnsCheck.at( area[rowIndex][cellIndex] ) > 0 )
                         return false;
                     columnsCheck[area[rowIndex][cellIndex]] = 1;
                 }
             }
 
             //Check Every Block
-            for (int blockVerticalIndex = 0; blockVerticalIndex < 3; blockVerticalIndex++) {
-                for (int blockHorizontalIndex = 0; blockHorizontalIndex < 3; blockHorizontalIndex++) {
-                    auto blockCheck = generateEmptyMap();
-                    for (int rowIndex = 3 * blockVerticalIndex; rowIndex < 3 * blockVerticalIndex + 3; rowIndex++) {
-                        for (int cellIndex = 3 * blockHorizontalIndex; cellIndex < 3 * blockHorizontalIndex + 3;
-                             cellIndex++) {
-                            if (blockCheck.at(area[rowIndex][cellIndex]) > 0)
+            for ( int blockVerticalIndex = 0; blockVerticalIndex < 3; blockVerticalIndex++ ) {
+                for ( int blockHorizontalIndex = 0; blockHorizontalIndex < 3; blockHorizontalIndex++ ) {
+                    auto blockCheck = generateEmptyMap( );
+                    for ( int rowIndex = 3 * blockVerticalIndex; rowIndex < 3 * blockVerticalIndex + 3; rowIndex++ ) {
+                        for ( int cellIndex = 3 * blockHorizontalIndex; cellIndex < 3 * blockHorizontalIndex + 3;
+                              cellIndex++ ) {
+                            if ( blockCheck.at( area[rowIndex][cellIndex] ) > 0 )
                                 return false;
                             blockCheck[area[rowIndex][cellIndex]] = 1;
                         }
@@ -76,24 +77,26 @@ namespace Sudoku {
             return true;
         }
 
-        static bool sanityCheck(const field area, const int row, const int column, const int value) {
+        static bool isValid( const field area, const int row, const int column, const int value ) {
             // Check X axis
+            for ( int i = 0; i < 9; i++ ) {
+                if ( value == area[i][column] ) {
+                    return false;
+                }
+            }
 
-            for (int i = 0; i < 9; i++) {
-                if (value == area[i][column]) {
-                    return false;
-                }
-            }
             // Check X axis
-            for (int i = 0; i < 9; i++) {
-                if (value == area[row][i]) {
+            for ( int i = 0; i < 9; i++ ) {
+                if ( value == area[row][i] ) {
                     return false;
                 }
             }
-            const int yLimit = ((row / 3) * 3), xLimit = ((column / 3) * 3);
-            for (int y = yLimit; y < yLimit + 3; y++) {
-                for (int x = xLimit ; x < xLimit + 3; x++) {
-                    if (value == area[y][x]) {
+
+            const int yLimit = ( ( row / 3 ) * 3 ), xLimit = ( ( column / 3 ) * 3 );
+
+            for ( int y = yLimit; y < yLimit + 3; y++ ) {
+                for ( int x = xLimit; x < xLimit + 3; x++ ) {
+                    if ( value == area[y][x] ) {
                         return false;
                     }
                 }
@@ -101,41 +104,34 @@ namespace Sudoku {
             return true;
         }
 
-        static void startAlgorithm([[maybe_unused]] const Algorithm selected) {
-            // switch (selected) {
-            //     default:
-            //         break;
-            // }
-        }
 
-        static bool backtrace(field& area, const int row, const int column) {
+        static bool backtrace( field &area, const int row, const int column ) {
             //Calculate next row
             int nextRow = row, nextColumn = column + 1;
-            if (nextColumn % 9 == 0) {
+            if ( nextColumn % 9 == 0 ) {
                 nextColumn = 0;
                 nextRow++;
             }
 
             //Check if last row & cell is being used
-            if (row == 8 && column == 8) { return true; }
+            if ( row == 8 && column == 8 ) { return true; }
 
             //Cell has number
-            if (_original[row][column] != 0) {
-                return backtrace(area, nextRow, nextColumn);
+            if ( _original[row][column] != 0 ) {
+                return backtrace( area, nextRow, nextColumn );
             }
 
             //https://pencilprogrammer.com/algorithms/sudoku-using-backtracking/
-            for (int nextNumber = 1; nextNumber <= 9; nextNumber++) {
+            for ( int nextNumber = 1; nextNumber <= 9; nextNumber++ ) {
                 area[row][column] = nextNumber;
-                if (isValid()) {
-                    //TODO
-                    if (backtrace(area, nextRow, nextColumn));
-                }
+                // if ( isValid( ) ) {
+                //     //TODO
+                //     if ( backtrace( area, nextRow, nextColumn ) );
+                // }
             }
 
 
-            return backtrace(area, nextRow, nextColumn );
-            
+            return backtrace( area, nextRow, nextColumn );
         }
     };
 }
