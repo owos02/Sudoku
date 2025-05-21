@@ -8,7 +8,6 @@
 #include <imgui.h>
 #include <string>
 #include <curl/curl.h>
-// "FIXME Rename File "
 
 namespace Sudoku {
     enum class Difficulties:int {
@@ -34,31 +33,31 @@ namespace Sudoku {
         PLACEHOLDER
     };
 
-    inline CURL *                                _curl;
     inline std::array< std::array< int, 9 >, 9 > _original;
     inline std::array< std::array< int, 9 >, 9 > _field;
     inline std::array< std::array< int, 9 >, 9 > _solution;
-    inline std::string                           _sudokuDifficulty          = "Random";
-    inline const char *                          _difficulties[ 4 ]         = { "Random", "Easy", "Medium", "Hard" };
-    inline int                                   _difficultiesSelectedIndex = 0;
-    inline const char *                          _solvingAlgorithms[ 2 ]    = { "Backtrace", "Placeholder" };
-    inline int                                   _algorithmSelectedIndex    = 0;
-    inline bool                                  _generateSudoku            = false;
-    inline bool                                  _solveSudoku               = false;
-    inline bool                                  _breakSolving              = false;
-    inline bool                                  _checkSudoku               = false;
-    inline bool                                  _enableShowWebSolution     = true;
-    inline bool                                  _isSolved                  = false;
-    inline bool                                  _invalidPuzzle             = false;
-    inline int                                   _selectedAPI               = 0;
-    inline int                                   _solvingDelay              = 0;
-    inline int                                   _mode                      = 0;
-    inline bool                                  _resetFields               = false;
-    inline bool                                  _loadPuzzle                = false;
+
+    inline CURL *      _curl;
+    inline std::string _sudokuDifficulty          = "Random";
+    inline const char *_difficulties[ 4 ]         = { "Random", "Easy", "Medium", "Hard" };
+    inline int         _difficultiesSelectedIndex = 0;
+    inline const char *_solvingAlgorithms[ 2 ]    = { "Backtrace", "Placeholder" };
+    inline int         _algorithmSelectedIndex    = 0;
+    inline bool        _generateSudoku            = false;
+    inline bool        _solveSudoku               = false;
+    inline bool        _breakSolving              = false;
+    inline bool        _checkSudoku               = false;
+    inline bool        _enableShowWebSolution     = true;
+    inline bool        _isSolved                  = false;
+    inline bool        _invalidPuzzle             = false;
+    inline int         _selectedAPI               = 0;
+    inline int         _solvingDelay              = 0;
+    inline int         _mode                      = 0;
+    inline bool        _resetFields               = false;
+    inline bool        _loadPuzzle                = false;
 
     inline int         _sudokusSelectedIndex = 0;
     inline const char *_exampleSudokus[ 3 ]  = { "Choose", "Anti Backtrace Sudoku", "Placeholder" };
-
 
     // For coloring current solving cell
     inline int  _visualiseX = -1;
@@ -78,7 +77,6 @@ namespace Sudoku {
         inline constexpr auto gameBoardText  = ImVec4( 0, 0, 0, 1.0f );
 
         inline constexpr auto transparent = ImVec4( 0, 0, 0, 0.0f );
-
 
         // Colors from Catppuccin Macchiato
         inline constexpr auto overlay0   = ImVec4( 110.0f / 255, 115.0f / 255, 141.0f / 255, 1.0 );
@@ -102,9 +100,8 @@ namespace Sudoku {
             { 5, 0, 0, 0, 0, 0, 0, 7, 3 },
             { 0, 0, 2, 0, 1, 0, 0, 0, 0 },
             { 0, 0, 0, 0, 4, 0, 0, 0, 9 }
-        }};
+        }
+    };
 #pragma endregion
-
-    }
-
+}
 #endif //SETTINGS_H
