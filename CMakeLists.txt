@@ -1,9 +1,14 @@
 cmake_minimum_required(VERSION 3.30)
-project(Sudoku VERSION 0.1.0)
+project(Sudoku VERSION 0.1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 
 configure_file(Sudoku.h.in Sudoku.h)
+
+# [SECTION] Enable March Native
+message(STATUS "[INFO]: Enable March Native")
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
 
 # [SECTION] Compiler Specifics
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang") # using Clang
@@ -56,6 +61,7 @@ add_executable(${CMAKE_PROJECT_NAME}
         Application/Gui.h
         Application/Algorithm.cpp
         Application/Algorithm.h
+        Application/Settings.cpp
         Application/Settings.h
         Application/ApiHandler.cpp
         Application/ApiHandler.h

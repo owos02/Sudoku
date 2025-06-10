@@ -65,7 +65,7 @@ void Sudoku::Gui::showField( ) {
             // Only allow decimals 0-9
             cell = cell % 10;
 
-            if ( static_cast< Mode >(_mode) == Mode::CREATE ) {
+            if ( static_cast< Mode >(_mode) == Mode::CREATE) {
                 _original[ row_index ][ cell_index ] = cell;
             }
 
