@@ -27,6 +27,7 @@
 
 // Main code
 int main( int, char ** ) {
+
 #pragma region Init
     // Setup SDL
     if ( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER ) != 0 ) {
@@ -107,6 +108,7 @@ int main( int, char ** ) {
     // Main loop
     bool done = false;
     while ( !done ) {
+
 #pragma region ImGui Example
         // Poll and handle events (inputs, window resize, etc.)
         // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
@@ -186,6 +188,7 @@ int main( int, char ** ) {
         ImGui_ImplSDLRenderer2_RenderDrawData( ImGui::GetDrawData( ), renderer );
         SDL_RenderPresent( renderer );
 #pragma endregion
+
     }
 
 #pragma region Cleanup
