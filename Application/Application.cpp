@@ -84,8 +84,5 @@ void Sudoku::Application::deploySolvingAlgorithm( const Algorithms algorithm ) {
             );
             break;
     }
-
-    //Function fields: field &area, const int row, const int column
     solver.detach( );
-    //Algorithm::backtrace( field, 0, 0 );
 }

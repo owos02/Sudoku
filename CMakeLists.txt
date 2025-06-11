@@ -5,10 +5,7 @@ set(CMAKE_CXX_STANDARD 23)
 
 configure_file(Sudoku.h.in Sudoku.h)
 
-# [SECTION] Enable March Native
-message(STATUS "[INFO]: Enable March Native")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
 
 # [SECTION] Compiler Specifics
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang") # using Clang
@@ -16,6 +13,10 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU") # using GCC
 
     message(STATUS "[INFO]: Enable Aggressive Warnings")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wall -Wextra -Wpedantic -pedantic-errors")
+
+    # [SECTION] Enable March Native
+    message(STATUS "[INFO]: Enable March Native")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
 
     if (CMAKE_BUILD_TYPE MATCHES Release)
         message(STATUS "[INFO]: Set _RELEASE Flag")
@@ -65,6 +66,7 @@ add_executable(${CMAKE_PROJECT_NAME}
         Application/Settings.h
         Application/ApiHandler.cpp
         Application/ApiHandler.h
+        Application/Settings.cpp
 )
 # [SECTION] Linking Libraries
 target_link_libraries(${CMAKE_PROJECT_NAME}

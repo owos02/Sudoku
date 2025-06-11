@@ -21,9 +21,9 @@ namespace Sudoku {
 
         static void slowDownAndVisualize( const int row, const int col );
 
-    public:
         static std::map< int, int > generateEmptyMap( );
 
+    public:
         static bool fieldConsistency( const field area );
 
         static bool isValid( const field area, const int row, const int column );
