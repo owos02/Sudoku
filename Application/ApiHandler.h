@@ -14,9 +14,9 @@ namespace Sudoku {
         static void execute( APIs api );
 
     private:
-        static void ydsApiFetch();
+        static void ydsApiFetch( );
 
-        static void dosukuApiFetch();
+        static void dosukuApiFetch( );
     };
 } // Sudoku
 

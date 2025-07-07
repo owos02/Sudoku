@@ -1,5 +1,5 @@
 //
-// Created by Ara on 02.05.2025.
+// Created by Oliver W. on 02.05.2025.
 //
 
 #include <imgui.h>
@@ -65,7 +65,7 @@ void Sudoku::Gui::showField( ) {
             // Only allow decimals 0-9
             cell = cell % 10;
 
-            if ( static_cast< Mode >(_mode) == Mode::CREATE) {
+            if ( static_cast< Mode >(_mode) == Mode::CREATE ) {
                 _original[ row_index ][ cell_index ] = cell;
             }
 
@@ -121,8 +121,13 @@ void Sudoku::Gui::showOptions( ) {
     }
     ImGui::SameLine( );
     if ( ImGui::Button( " Reset " ) ) {
-        _field    = _original;
-        _isSolved = false;
+        using namespace std::chrono_literals;
+        _isSolved     = false;
+        _mode         = static_cast< int >(Mode::SOLVING);
+        _breakSolving = true;
+        std::this_thread::sleep_for( 100ms );
+        _breakSolving = false;
+        _field        = _original;
     }
     ImGui::SameLine( );
     ImGui::BeginDisabled( _enableShowWebSolution );

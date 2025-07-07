@@ -1,5 +1,5 @@
 //
-// Created by Ara on 02.05.2025.
+// Created by Oliver W. on 02.05.2025.
 //
 
 #include <thread>
@@ -8,6 +8,7 @@
 
 #include "Settings.h"
 #include "Algorithm.h"
+
 
 void Sudoku::Algorithm::slowDownAndVisualize( const int row, const int col ) {
     _visualiseX = col;
@@ -38,14 +39,15 @@ void Sudoku::Algorithm::slowDownAndVisualize( const int row, const int col ) {
 
 std::map< int, int > Sudoku::Algorithm::generateEmptyMap( ) {
     std::map< int, int > tmp;
-    for ( int i = 0; i <= 9; i++ )
+    for ( int i = 0; i <= SIZE; i++ )
         tmp.insert( std::pair( i, 0 ) );
     tmp[ 0 ] = -99;
     return tmp;
 }
 
 // Checks for whole field
-bool Sudoku::Algorithm::fieldConsistency( field area ) {
+// No field reference for speed
+bool Sudoku::Algorithm::fieldConsistency(const field area ) {
     //Check if all cells contain valid numbers
     for ( auto row : area ) {
         for ( const int cell : row ) {
@@ -65,9 +67,9 @@ bool Sudoku::Algorithm::fieldConsistency( field area ) {
     }
 
     //Check Columns
-    for ( int cellIndex = 0; cellIndex < 9; cellIndex++ ) {
+    for ( int cellIndex = 0; cellIndex < SIZE; cellIndex++ ) {
         auto columnsCheck = generateEmptyMap( );
-        for ( int rowIndex = 0; rowIndex < 9; rowIndex++ ) {
+        for ( int rowIndex = 0; rowIndex < SIZE; rowIndex++ ) {
             if ( columnsCheck.at( area[ rowIndex ][ cellIndex ] ) > 0 )
                 return false;
             columnsCheck[ area[ rowIndex ][ cellIndex ] ] = 1;
@@ -75,11 +77,12 @@ bool Sudoku::Algorithm::fieldConsistency( field area ) {
     }
 
     //Check Every Block
-    for ( int blockVerticalIndex = 0; blockVerticalIndex < 3; blockVerticalIndex++ ) {
-        for ( int blockHorizontalIndex = 0; blockHorizontalIndex < 3; blockHorizontalIndex++ ) {
+    for ( int blockVerticalIndex = 0; blockVerticalIndex < BLOCK; blockVerticalIndex++ ) {
+        for ( int blockHorizontalIndex = 0; blockHorizontalIndex < BLOCK; blockHorizontalIndex++ ) {
             auto blockCheck = generateEmptyMap( );
-            for ( int rowIndex = 3 * blockVerticalIndex; rowIndex < 3 * blockVerticalIndex + 3; rowIndex++ ) {
-                for ( int cellIndex = 3 * blockHorizontalIndex; cellIndex < 3 * blockHorizontalIndex + 3;
+            for ( int rowIndex = BLOCK * blockVerticalIndex; rowIndex < BLOCK * blockVerticalIndex + BLOCK; rowIndex
+                  ++ ) {
+                for ( int cellIndex = BLOCK * blockHorizontalIndex; cellIndex < BLOCK * blockHorizontalIndex + BLOCK;
                       cellIndex++ ) {
                     if ( blockCheck.at( area[ rowIndex ][ cellIndex ] ) > 0 )
                         return false;
@@ -92,23 +95,24 @@ bool Sudoku::Algorithm::fieldConsistency( field area ) {
 }
 
 // Checks for one cell
-bool Sudoku::Algorithm::isValid( field area, const int row, const int column ) {
+// No field reference for speed
+bool Sudoku::Algorithm::isValid( const field area, const int row, const int column ) {
     // Horizontal Check
-    for ( int i = 0; i < 9; i++ ) {
+    for ( int i = 0; i < SIZE; i++ ) {
         if ( ( area[ row ][ i ] == area[ row ][ column ] ) && ( i != column ) )
             return false;
     }
     //Vertical Check
-    for ( int i = 0; i < 9; i++ ) {
+    for ( int i = 0; i < SIZE; i++ ) {
         if ( ( area[ i ][ column ] == area[ row ][ column ] ) && ( i != row ) )
             return false;
     }
     //Get Grid
-    const int startRow    = ( row / 3 ) * 3;
-    const int startColumn = ( column / 3 ) * 3;
+    const int startRow    = ( row / BLOCK ) * BLOCK;
+    const int startColumn = ( column / BLOCK ) * BLOCK;
     //Block Check
-    for ( int i = startRow; i < startRow + 3; i++ ) {
-        for ( int j = startColumn; j < startColumn + 3; j++ ) {
+    for ( int i = startRow; i < startRow + BLOCK; i++ ) {
+        for ( int j = startColumn; j < startColumn + BLOCK; j++ ) {
             if ( area[ row ][ column ] == area[ i ][ j ] && ( row != i ) && ( column != j ) )
                 return false;
         }
@@ -116,16 +120,16 @@ bool Sudoku::Algorithm::isValid( field area, const int row, const int column ) {
     return true;
 }
 
-bool Sudoku::Algorithm::backtrace( field area, const int row, const int column ) {
+bool Sudoku::Algorithm::backtrace( field& area, const int row, const int column ) {
     //Calculate next row
     int nextRow = row, nextColumn = column + 1;
-    if ( nextColumn == 9 ) {
+    if ( nextColumn == SIZE ) {
         nextColumn = 0;
         nextRow++;
     }
 
     //Check if past game field
-    if ( row == 9 ) {
+    if ( row == SIZE ) {
         _visualiseX = -1;
         _visualiseY = -1;
         if ( fieldConsistency( area ) ) {
@@ -142,7 +146,7 @@ bool Sudoku::Algorithm::backtrace( field area, const int row, const int column )
     }
 
     //Test Cell
-    for ( int nextNumber = 1; nextNumber <= 9; nextNumber++ ) {
+    for ( int nextNumber = 1; nextNumber <= SIZE; nextNumber++ ) {
         if ( _breakSolving )
             return true;
         slowDownAndVisualize( row, column );

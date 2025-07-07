@@ -7,7 +7,6 @@
 Sudoku::Application::Application( ) {
     curl_global_init( CURL_GLOBAL_DEFAULT );
     _curl = curl_easy_init( );
-    Gui::setStyling( );
     resetFields( );
 }
 

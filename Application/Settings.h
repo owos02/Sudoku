@@ -1,5 +1,5 @@
 //
-// Created by Ara on 02.05.2025.
+// Created by Oliver W. on 02.05.2025.
 //
 
 #ifndef SETTINGS_H
